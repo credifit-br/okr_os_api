@@ -25,5 +25,6 @@ temp/
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
-# Node.js heap out of memory reports
-report.*.json
+# Extras, only for Docker
+test
+Dockerfile

@@ -1,0 +1,81 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "Episode": {
+            "properties": {
+                "_links": {
+                    "properties": {
+                        "self": {
+                            "properties": {
+                                "href": {
+                                    "format": "uri",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "airdate": {
+                    "description": "Formato: 2018-12-30",
+                    "format": "date",
+                    "type": "string"
+                },
+                "airstamp": {
+                    "description": "Formato: 2013-07-02T02:00:00+00:00",
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "airtime": {
+                    "description": "Formato: 22:00",
+                    "format": "HH:MM",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image": {
+                    "properties": {
+                        "medium": {
+                            "format": "uri",
+                            "type": "string"
+                        },
+                        "original": {
+                            "format": "uri",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "number"
+                },
+                "runtime": {
+                    "type": "number"
+                },
+                "season": {
+                    "type": "number"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "url": {
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "EpisodeList": {
+            "items": {
+                "$ref": "#/definitions/Episode"
+            },
+            "type": "array"
+        }
+    }
+}
+
