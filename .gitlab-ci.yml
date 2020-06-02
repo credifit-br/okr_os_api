@@ -1,0 +1,113 @@
+image: node:12-alpine
+
+stages:
+  - check
+
+ESLint:
+  stage: check
+  script:
+    - npm ci
+    - npm run eslint:check
+
+Type Check:
+  stage: check
+  script:
+    - npm ci
+    - npx tsc -noEmit
+
+NPM Audit:
+  stage: check
+  allow_failure: true
+  script:
+    - npm audit
+
+Check TODOs:
+  stage: check
+  allow_failure: true
+  script:
+    - npm install --g leasot
+    - leasot 'src/**/*.ts' 'tests/**/*.ts'
+
+Check API compatibility:
+  image: node:12
+  stage: check
+  allow_failure: true
+  script:
+    - npm ci
+    - git fetch origin master:master
+    - git config --global user.email "ci@example.com"
+    - git config --global user.name "CI"
+    - git merge master --no-edit
+    - mkdir src/.current
+    - cp -r src/api.sdkgen src/schemas src/.current/
+    - git checkout master
+    - npx sdkgen compatibility src/api.sdkgen src/.current/api.sdkgen
+
+JSON Schema (check no diff):
+  stage: check
+  script:
+    - npm ci
+    - npm run jsonschema
+    - "[[ -z $(git status -s) ]]"
+
+sdkgen (check no diff):
+  stage: check
+  script:
+    - npm ci
+    - npm run sdkgen
+    - "[[ -z $(git status -s) ]]"
+
+.Test:
+  stage: check
+  script:
+    - cat <<END > .env
+    - DB_HOST=localhost
+    - DB_USERNAME=postgres
+    - DB_PASSWORD=
+    - DB_DATABASE=postgres
+    - DB_PORT=5432
+    - DB_LOGGING=true
+    - FAKER_SEED=$((RANDOM))
+    - END
+    - npm ci
+    - npm test
+  artifacts:
+    paths:
+      - coverage/
+    when: always
+
+Test (PostgreSQL 11):
+  extends: .Test
+  services:
+    - postgres:11
+
+Test (PostgreSQL 10.4):
+  extends: .Test
+  services:
+    - postgres:10.4
+
+Analyze (SonarQube):
+  stage: check
+  image:
+    name: newtmitch/sonar-scanner:3.3.0
+    entrypoint: [""]
+  only:
+    - master
+  script:
+    - rm package.json
+    - npm init -y
+    - npm install typescript
+    - sonar-scanner -Dsonar.sources='./src,./tests' -Dsonar.coverage.exclusions='**/tests/**/*,**/src/generated/**/*,**/src/migrations/**/*,**/src/server.ts,**/src/helpers/schema-validator.ts,**/src/helpers/translate.ts,**/src/helpers/sentry.ts,**/src/helpers/elasticsearch.ts,**/src/helpers/env.ts' -Dsonar.exclusions='**/node_modules/**/*,**/src/generated/**/*,**/src/migrations/**/*' -Dsonar.tests='src/generated' -Dsonar.typescript.lcov.reportPaths='coverage/lcov.info' -Dsonar.javascript.lcov.reportPaths='coverage/lcov.info' -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.projectName=$CI_PROJECT_NAME -Dsonar.projectVersion=$CI_PIPELINE_ID -Dsonar.projectBaseDir=$PWD -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID
+
+Analyze Commit (SonarQube):
+  stage: check
+  image:
+    name: newtmitch/sonar-scanner:3.3.0
+    entrypoint: [""]
+  except:
+    - master
+  script:
+    - rm package.json
+    - npm init -y
+    - npm install typescript
+    - sonar-scanner -Dsonar.analysis.mode=preview -Dsonar.sources='./src,./tests' -Dsonar.coverage.exclusions='**/tests/**/*,**/src/generated/**/*,**/src/migrations/**/*,**/src/server.ts,**/src/helpers/schema-validator.ts,**/src/helpers/translate.ts,**/src/helpers/sentry.ts,**/src/helpers/elasticsearch.ts,**/src/helpers/env.ts' -Dsonar.exclusions='**/node_modules/**/*,**/src/generated/**/*,**/src/migrations/**/*' -Dsonar.tests='src/generated' -Dsonar.typescript.lcov.reportPaths='coverage/lcov.info' -Dsonar.javascript.lcov.reportPaths='coverage/lcov.info' -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.projectName=$CI_PROJECT_NAME -Dsonar.projectVersion=$CI_PIPELINE_ID -Dsonar.projectBaseDir=$PWD -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID

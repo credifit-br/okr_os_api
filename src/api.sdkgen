@@ -1,0 +1,3 @@
+import "./schemas/errors"
+import "./schemas/shows"
+import "./schemas/user"
