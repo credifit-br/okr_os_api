@@ -9,7 +9,7 @@ import { insertSdkgenReplyOnElasticsearch, startElasticsearch } from "./helpers/
 import { startSentry } from "./helpers/sentry";
 import { trFactory } from "./helpers/translate";
 import { createTvmazeAxiosClient } from "./integrations/tvmaze";
-import { PostRepository, UserRepository } from "./repositories";
+import { ObjectiveRepository, UserRepository } from "./repositories";
 
 process.env.TZ = "UTC";
 
@@ -65,7 +65,7 @@ getConnectionOptions()
       captureException,
       db: {
         connection,
-        post: connection.getCustomRepository(PostRepository),
+        objective: connection.getCustomRepository(ObjectiveRepository),
         user: connection.getCustomRepository(UserRepository),
       },
       integrations: {
