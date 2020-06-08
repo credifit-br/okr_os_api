@@ -1,2 +1,2 @@
-import "./shows";
+import "./objectives";
 import "./user";

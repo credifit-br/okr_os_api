@@ -1,7 +1,7 @@
 type Objective {
-    id: uint
+    id: uuid
     title: string
-    description: uint
+    description: string
 }
 
-fn getObjectives(objectId: uint): Objective[]
+fn getObjectives(): Objective[]
