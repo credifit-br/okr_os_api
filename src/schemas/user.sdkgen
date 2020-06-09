@@ -1,7 +1,8 @@
 type User {
     id: uuid
     name: string
+    email: string
 }
 
 fn getUsers(): User[]
-fn createUser(name: string, age: uint): User
+fn createUser(name: string, email: string): User

@@ -1,7 +1,0 @@
-type Episode {
-    id: uint
-    name: string
-    season: uint
-}
-
-fn getEpisodes(showId: uint): Episode[]

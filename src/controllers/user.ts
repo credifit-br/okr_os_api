@@ -4,6 +4,7 @@ import { User } from "../models";
 function formatUser(user: User) {
   return {
     id: user.id,
+    email: user.email,
     name: `${user.firstName} ${user.lastName}`,
   };
 }
@@ -14,7 +15,7 @@ api.fn.getUsers = async ctx => {
   return users.map(formatUser);
 };
 
-api.fn.createUser = async (ctx, { name, age }) => {
+api.fn.createUser = async (ctx, { name, email }) => {
   const splitName = name.split(" ");
 
   if (splitName.length !== 2) {
@@ -24,7 +25,7 @@ api.fn.createUser = async (ctx, { name, age }) => {
   const [firstName, lastName] = splitName;
 
   const createdUser = await ctx.db.user.save({
-    age,
+    email,
     firstName,
     lastName,
   });

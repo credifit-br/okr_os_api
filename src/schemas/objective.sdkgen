@@ -1,0 +1,7 @@
+type Objective {
+    id: uuid
+    title: string
+    description: string
+}
+
+fn getObjectives(): Objective[]

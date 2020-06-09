@@ -1,14 +1,15 @@
 import { BaseApiConfig, Context, SdkgenError } from "@sdkgen/node-runtime";
 
-export interface Episode {
-    id: number
-    name: string
-    season: number
+export interface Objective {
+    id: string
+    title: string
+    description: string
 }
 
 export interface User {
     id: string
     name: string
+    email: string
 }
 
 export class InvalidArgument extends SdkgenError {}
@@ -17,9 +18,9 @@ export class Fatal extends SdkgenError {}
 
 export class ApiConfig<ExtraContextT> extends BaseApiConfig<ExtraContextT> {
     fn!: {
-        getEpisodes: (ctx: Context & ExtraContextT, args: {showId: number}) => Promise<Episode[]>
+        getObjectives: (ctx: Context & ExtraContextT, args: {}) => Promise<Objective[]>
         getUsers: (ctx: Context & ExtraContextT, args: {}) => Promise<User[]>
-        createUser: (ctx: Context & ExtraContextT, args: {name: string, age: number}) => Promise<User>
+        createUser: (ctx: Context & ExtraContextT, args: {name: string, email: string}) => Promise<User>
     }
 
     err = {
@@ -29,22 +30,21 @@ export class ApiConfig<ExtraContextT> extends BaseApiConfig<ExtraContextT> {
 
     astJson = {
         typeTable: {
-            Episode: {
-                id: "uint",
-                name: "string",
-                season: "uint"
+            Objective: {
+                id: "uuid",
+                title: "string",
+                description: "string"
             },
             User: {
                 id: "uuid",
-                name: "string"
+                name: "string",
+                email: "string"
             }
         },
         functionTable: {
-            getEpisodes: {
-                args: {
-                    showId: "uint"
-                },
-                ret: "Episode[]"
+            getObjectives: {
+                args: {},
+                ret: "Objective[]"
             },
             getUsers: {
                 args: {},
@@ -53,7 +53,7 @@ export class ApiConfig<ExtraContextT> extends BaseApiConfig<ExtraContextT> {
             createUser: {
                 args: {
                     name: "string",
-                    age: "uint"
+                    email: "string"
                 },
                 ret: "User"
             }
