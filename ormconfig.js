@@ -1,8 +1,6 @@
 const { SnakeNamingStrategy } = require("typeorm-naming-strategies");
 const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_LOGGING } = process.env;
 
-console.log(DB_DATABASE, DB_PASSWORD, DB_USERNAME, DB_PORT);
-
 module.exports = {
     type: "postgres",
 

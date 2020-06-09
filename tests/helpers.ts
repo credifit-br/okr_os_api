@@ -5,7 +5,7 @@ import { Connection, createConnection, getConnectionOptions } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { Context } from "../src/api";
 import { trFactory } from "../src/helpers/translate";
-import { PostRepository, UserRepository } from "../src/repositories";
+import { ObjectiveRepository, UserRepository } from "../src/repositories";
 
 process.env.TZ = "UTC";
 
@@ -62,7 +62,7 @@ export function makeCtx(ctx: DeepPartial<Context>) {
     captureException: () => null,
     db: {
       connection,
-      post: connection.getCustomRepository(PostRepository),
+      objective: connection.getCustomRepository(ObjectiveRepository),
       user: connection.getCustomRepository(UserRepository),
     },
     tr: trFactory("pt"),
